@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API = "http://localhost:8080/api";
+const API = "https://traveller-app-7dyb.onrender.com";
 
 export default function Admin() {
 
