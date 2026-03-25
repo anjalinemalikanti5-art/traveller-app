@@ -2,6 +2,10 @@
   "name": "travellerapp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  },
   "dependencies": {
     "@shadcn/ui": "^0.0.4",
     "@testing-library/dom": "^12.0.0",
