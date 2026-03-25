@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API = "https://traveller-backend-d1sq.onrender.com";
+const API = "http://localhost:8080/api";
 
 export default function Admin() {
 
@@ -9,16 +9,25 @@ export default function Admin() {
     source: "",
     destination: "",
     totalSeats: "",
-    price: ""
+    price: "",
   });
 
   const addBus = async () => {
-    await fetch(`${API}/buses`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(newBus)
-    });
-    alert("Bus Added ✅");
+    try {
+      await fetch(`${API}/buses`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          ...newBus,
+          totalSeats: Number(newBus.totalSeats),
+          price: Number(newBus.price)
+        })
+      });
+
+      alert("Bus Added ✅");
+    } catch {
+      alert("Error ❌");
+    }
   };
 
   return (

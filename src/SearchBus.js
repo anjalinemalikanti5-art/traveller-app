@@ -8,32 +8,25 @@ export default function SearchBus({ onSearch, buses, onSelectBus }) {
     <div>
       <h2>Search Bus</h2>
 
-      <input
-        placeholder="Source"
-        onChange={(e) =>
-          setSearch({ ...search, source: e.target.value })
-        }
+      <input placeholder="Source"
+        onChange={e=>setSearch({...search,source:e.target.value})}
       />
 
-      <input
-        placeholder="Destination"
-        onChange={(e) =>
-          setSearch({ ...search, destination: e.target.value })
-        }
+      <input placeholder="Destination"
+        onChange={e=>setSearch({...search,destination:e.target.value})}
       />
 
-      <button onClick={() => onSearch(search)}>Search</button>
+      <button onClick={()=>onSearch(search)}>Search</button>
 
-      <h2>Available Buses</h2>
+      <h3>Available Buses</h3>
 
-      {buses.map((bus) => (
+      {Array.isArray(buses) && buses.map(bus => (
         <div key={bus.id}>
           <p>
-            {bus.busNumber} | Seats: {bus.totalSeats}
+            {bus.busNumber} | Seats: {bus.totalSeats} | ₹{bus.price}
           </p>
 
-          {/* 🔥 IMPORTANT BUTTON */}
-          <button onClick={() => onSelectBus(bus)}>
+          <button onClick={()=>onSelectBus(bus)}>
             View Seats
           </button>
         </div>

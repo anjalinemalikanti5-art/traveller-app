@@ -8,21 +8,33 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
   const [selectedSeats, setSelectedSeats] = useState([]);
 
   useEffect(() => {
+    if (!bus) return;
+
     const seatArray = Array.from({ length: bus.totalSeats }, (_, i) => ({
       number: i + 1,
       booked: false
     }));
 
     bookings.forEach(b => {
-      if (b.busNumber === bus.busNumber && b.status === "BOOKED") {
-        seatArray[b.seatNumber - 1].booked = true;
+      if (
+        b.busNumber &&
+        bus.busNumber &&
+        String(b.busNumber).toLowerCase() ===
+        String(bus.busNumber).toLowerCase() &&
+        b.status === "BOOKED"
+      ) {
+        const index = b.seatNumber - 1;
+
+        if (index >= 0 && index < seatArray.length) {
+          seatArray[index].booked = true;
+        }
       }
     });
 
     setSeats(seatArray);
+
   }, [bus, bookings]);
 
-  // SELECT / UNSELECT
   const toggleSeat = (seatNo) => {
     if (selectedSeats.includes(seatNo)) {
       setSelectedSeats(selectedSeats.filter(s => s !== seatNo));
@@ -31,11 +43,8 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
     }
   };
 
-  // 🔥 PRICE CALCULATION
-  const pricePerSeat = 500;
-  const totalPrice = selectedSeats.length * pricePerSeat;
+  const totalPrice = selectedSeats.length * bus.price;
 
-  // BOOK
   const bookSeats = async () => {
     if (selectedSeats.length === 0) {
       alert("Select seats first");
@@ -50,35 +59,26 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
           body: JSON.stringify({
             travellerName: user.name,
             busNumber: bus.busNumber,
-            seatNumber: seatNo,
-            travelDate: new Date().toISOString().split("T")[0]
+            seatNumber: seatNo
           })
         });
       }
 
-      alert(`Seats booked ✅\nTotal Paid: ₹${totalPrice}`);
-
-      refreshBookings();
+      await refreshBookings();   // 🔥 refresh data
       setSelectedSeats([]);
 
-    } catch {
-      alert("Some seats already booked ❌");
-    }
-  };
+      alert(`Booked ✅ ₹${totalPrice}`);
 
-  const cancelSeat = async (id) => {
-    await fetch(`${API}/bookings/cancel/${id}`, { method: "PUT" });
-    alert("Cancelled ✅");
-    refreshBookings();
+    } catch {
+      alert("Booking failed ❌");
+    }
   };
 
   return (
     <div>
       <h2>Seats ({bus.busNumber})</h2>
 
-      {/* 🔥 PRICE DISPLAY */}
-      <h3>Price per seat: ₹{pricePerSeat}</h3>
-      <h3>Total price: ₹{totalPrice}</h3>
+      <h3>Total Price: ₹{totalPrice}</h3>
 
       {seats.map(seat => (
         <button
@@ -87,11 +87,12 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
           onClick={()=>toggleSeat(seat.number)}
           style={{
             margin:"5px",
+            padding:"10px",
             backgroundColor: seat.booked
-              ? "red"
+              ? "red"        // 🔴 BOOKED
               : selectedSeats.includes(seat.number)
-              ? "blue"
-              : "lightgreen"
+              ? "blue"       // 🔵 SELECTED
+              : "lightgreen" // 🟢 AVAILABLE
           }}
         >
           {seat.number}
@@ -100,17 +101,6 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
 
       <br/><br/>
       <button onClick={bookSeats}>Book Selected Seats</button>
-
-      <h3>Your Bookings</h3>
-      {bookings.filter(b => b.travellerName === user.name).map(b => (
-        <div key={b.id}>
-          {b.busNumber} Seat {b.seatNumber} ({b.status})
-
-          {b.status === "BOOKED" && (
-            <button onClick={()=>cancelSeat(b.id)}>Cancel</button>
-          )}
-        </div>
-      ))}
     </div>
   );
 }
