@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
-const API = "https://traveller-app-7dyb.onrender.com";
+//const API = "https://traveller-app-7dyb.onrender.com";
+const API = "https://traveller-backend-z13f.onrender.com";
 
 export default function Admin() {
 
