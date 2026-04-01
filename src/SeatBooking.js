@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API = "http://localhost:8080/api";
+const API = "https://traveller-backend-z13f.onrender.com/api";
 
 export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
 
@@ -75,32 +75,51 @@ export default function SeatBooking({ bus, bookings, user, refreshBookings }) {
   };
 
   return (
-    <div>
-      <h2>Seats ({bus.busNumber})</h2>
+    <div className="container">
+      <div className="seat-booking-panel">
+        <h2>Select Seats for {bus.busNumber}</h2>
 
-      <h3>Total Price: ₹{totalPrice}</h3>
+        <div className="seat-legend">
+          <div className="legend-item">
+            <div className="legend-box seat-available"></div> Available
+          </div>
+          <div className="legend-item">
+            <div className="legend-box seat-selected"></div> Selected
+          </div>
+          <div className="legend-item">
+            <div className="legend-box seat-booked"></div> Booked
+          </div>
+        </div>
 
-      {seats.map(seat => (
-        <button
-          key={seat.number}
-          disabled={seat.booked}
-          onClick={()=>toggleSeat(seat.number)}
-          style={{
-            margin:"5px",
-            padding:"10px",
-            backgroundColor: seat.booked
-              ? "red"        // 🔴 BOOKED
-              : selectedSeats.includes(seat.number)
-              ? "blue"       // 🔵 SELECTED
-              : "lightgreen" // 🟢 AVAILABLE
-          }}
-        >
-          {seat.number}
-        </button>
-      ))}
+        <div className="seats-grid">
+          {seats.map(seat => {
+            let seatClass = "seat-available";
+            if (seat.booked) seatClass = "seat-booked";
+            else if (selectedSeats.includes(seat.number)) seatClass = "seat-selected";
 
-      <br/><br/>
-      <button onClick={bookSeats}>Book Selected Seats</button>
+            return (
+              <button
+                key={seat.number}
+                disabled={seat.booked}
+                onClick={() => toggleSeat(seat.number)}
+                className={`seat ${seatClass}`}
+              >
+                {seat.number}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="booking-summary">
+          <div>
+            <p style={{ margin: "0 0 5px 0", color: "var(--text-muted)" }}>Total Selected: {selectedSeats.length} seats</p>
+            <h3>Total Price: ₹{totalPrice}</h3>
+          </div>
+          <button className="btn btn-primary" style={{ width: "auto", padding: "12px 30px" }} onClick={bookSeats}>
+            Confirm Booking
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
