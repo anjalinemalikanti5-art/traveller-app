@@ -11,24 +11,36 @@ export default function Admin() {
     totalSeats: "",
     price: "",
   });
+const addBus = async () => {
+  try {
+    const res = await fetch(`${API}/api/buses`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...newBus,
+        totalSeats: Number(newBus.totalSeats),
+        price: Number(newBus.price)
+      })
+    });
 
-  const addBus = async () => {
-    try {
-      await fetch(`${API}/buses`, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-          ...newBus,
-          totalSeats: Number(newBus.totalSeats),
-          price: Number(newBus.price)
-        })
-      });
-
-      alert("Bus Added ✅");
-    } catch {
-      alert("Error ❌");
+    // 🔴 THIS IS IMPORTANT
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Backend Error:", errorText);
+      alert("Failed ❌");
+      return;
     }
-  };
+
+    const data = await res.json();
+    console.log("SUCCESS:", data);
+
+    alert("Bus Added ✅");
+
+  } catch (err) {
+    console.error("Network Error:", err);
+    alert("Error ❌");
+  }
+};
 
   return (
     <div style={{ textAlign:"center" }}>

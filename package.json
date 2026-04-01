@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@shadcn/ui": "^0.0.4",
-    "@testing-library/react": "^14.0.0",
     "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.6.1",
+    "ajv": "^8.18.0",
+    "ajv-keywords": "^5.1.0",
     "axios": "^1.13.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
